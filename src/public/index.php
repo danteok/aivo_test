@@ -10,6 +10,9 @@ require '../../vendor/autoload.php';
 
 $app = new \Slim\App;
 
+// Set your Spotify credentials here
+define('SPOTIFY_API_CLIENT_ID', '0a372a82df7a40e3b7f0ca238ceed70d');
+define('SPOTIFY_API_CLIENT_SECRET', '4ae69aab046642aabe12687227d01527');
 
 $app->get('/api/v1/albums', function (Request $request, Response $response, array $args) {
     try {
@@ -21,8 +24,6 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
         exit($ex->getMessage());
     }
 
-    $client_id = '0a372a82df7a40e3b7f0ca238ceed70d';
-    $client_secret = '4ae69aab046642aabe12687227d01527';
 
     // Obtengo Token
     try {
@@ -30,7 +31,7 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
 
         $responseToken = $client->request('POST', 'https://accounts.spotify.com/api/token', [
             'form_params' => ["grant_type" => "client_credentials"],
-            'headers' => ['Authorization' => 'Basic ' . base64_encode($client_id . ':' . $client_secret)]
+            'headers' => ['Authorization' => 'Basic ' . base64_encode(SPOTIFY_API_CLIENT_ID . ':' . SPOTIFY_API_CLIENT_SECRET)]
                 ]
         );
         $responseToken = json_decode($responseToken->getBody());
