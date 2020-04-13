@@ -21,7 +21,11 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
         }
         $query = $_GET['q'];
     } catch (Exception $ex) {
-        exit($ex->getMessage());
+        $responseApi = [
+            'status' => 'failed',
+            'error' => $ex->getMessage()
+        ];
+        return $response->withJson($responseApi);
     }
 
 
@@ -37,7 +41,11 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
         $responseToken = json_decode($responseToken->getBody());
         $token = $responseToken->access_token;
     } catch (RequestException $exception) {
-        exit($exception->getMessage());
+        $responseApi = [
+            'status' => 'failed',
+            'error' => $exception->getMessage()
+        ];
+        return $response->withJson($responseApi);
     }
 
     // Una query puede tener varios artistas, ej: Gonzalez
@@ -49,7 +57,11 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
         );
         $responseArtist = json_decode($responseArtist->getBody());
     } catch (RequestException $exception) {
-        exit($exception->getMessage());
+        $responseApi = [
+            'status' => 'failed',
+            'error' => $exception->getMessage()
+        ];
+        return $response->withJson($responseApi);
     }
 
     $artists = $responseArtist->artists;
@@ -79,11 +91,18 @@ $app->get('/api/v1/albums', function (Request $request, Response $response, arra
                 ];
             }
         } catch (RequestException $exception) {
-            exit($exception->getMessage());
+            $responseApi = [
+                'status' => 'failed',
+                'error' => $exception->getMessage()
+            ];
+            return $response->withJson($responseApi);
         }
     }
 
-    return $response->withJson($responseApi);
+    return $response->withJson([
+                'status' => 'ok',
+                'albums' => $responseApi
+    ]);
 });
 
 
